@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chief Accountant & Financial Controller Suite - Accumen Pro</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Dynamic Navigation Bar -->
+  <div id="navPlaceholder"></div>
+
+  <main class="container">
+    <!-- Header with Executive Actions -->
+    <div class="page-header">
+      <div class="page-title-group">
+        <h1>
+          <span>📈</span>
+          <span>Chief Accountant & Controller Suite</span>
+        </h1>
+        <p class="page-subtitle">Statutory Financial Statements (P&L, Balance Sheet, Cash Flow), Depreciation, Closing & Audits</p>
+      </div>
+
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+        <button class="btn btn-primary" id="btnRunDepreciation" title="Compute Straight-Line / Declining Depreciation for all Fixed Assets">
+          <span>⚙️</span> Run Depreciation
+        </button>
+        <button class="btn btn-secondary" id="btnRunAmortization" title="Amortize Prepayments and Accruals">
+          <span>⏳</span> Amortize Accruals
+        </button>
+        <button class="btn btn-secondary" onclick="openModal('modalNewAsset')">
+          <span>🏗️</span> Register Fixed Asset
+        </button>
+        <button class="btn btn-warning" id="btnCloseMonth">
+          <span>🔒</span> Month-End Close
+        </button>
+        <button class="btn btn-danger" id="btnCloseYear">
+          <span>🏛️</span> Year-End Retained Rollup
+        </button>
+        <button class="btn btn-secondary" onclick="window.print()">
+          <span>🖨️</span> Print Dossier
+        </button>
+      </div>
+    </div>
+
+    <!-- Executive KPI Grid -->
+    <div class="stats-grid">
+      <div class="stat-card purple">
+        <div class="stat-header">
+          <span class="stat-title">Net Operating Margin</span>
+          <div class="stat-icon">📊</div>
+        </div>
+        <div class="stat-val" id="ratioNetMargin">0.0%</div>
+        <div class="stat-footer">Net Income / Total Revenue</div>
+      </div>
+
+      <div class="stat-card success">
+        <div class="stat-header">
+          <span class="stat-title">Current Ratio (Liquidity)</span>
+          <div class="stat-icon">💧</div>
+        </div>
+        <div class="stat-val" id="ratioCurrent">0.00</div>
+        <div class="stat-footer">Target: > 1.50 (Healthy)</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <span class="stat-title">Quick Ratio (Acid-Test)</span>
+          <div class="stat-icon">⚡</div>
+        </div>
+        <div class="stat-val" id="ratioQuick">0.00</div>
+        <div class="stat-footer">(Cash + Receivables) / Current Liabilities</div>
+      </div>
+
+      <div class="stat-card warning">
+        <div class="stat-header">
+          <span class="stat-title">Debt-to-Equity</span>
+          <div class="stat-icon">⚖️</div>
+        </div>
+        <div class="stat-val" id="ratioDebtEquity">0.00</div>
+        <div class="stat-footer">Total Liabilities / Shareholder Equity</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <span class="stat-title">Return on Assets (ROA)</span>
+          <div class="stat-icon">🎯</div>
+        </div>
+        <div class="stat-val" id="ratioROA">0.0%</div>
+        <div class="stat-footer">Annualized Asset Efficiency</div>
+      </div>
+
+      <div class="stat-card success">
+        <div class="stat-header">
+          <span class="stat-title">Fiscal Status</span>
+          <div class="stat-icon">🛡️</div>
+        </div>
+        <div class="stat-val" style="font-size:1.35rem;" id="periodClosingStatus">Open for Posting</div>
+        <div class="stat-footer">FY 2026 Accounting Period</div>
+      </div>
+    </div>
+
+    <!-- Accountant Tabs Navigation -->
+    <div class="tabs-container">
+      <div class="tabs-list">
+        <button class="tab-btn active" data-target="tabPnL">
+          <span>📊</span> Profit & Loss (P&L)
+        </button>
+        <button class="tab-btn" data-target="tabBalanceSheet">
+          <span>🏛️</span> Balance Sheet
+        </button>
+        <button class="tab-btn" data-target="tabCashFlow">
+          <span>🌊</span> Cash Flow Statement
+        </button>
+        <button class="tab-btn" data-target="tabFixedAssets">
+          <span>🏗️</span> Fixed Assets & Depreciation
+        </button>
+        <button class="tab-btn" data-target="tabAccruals">
+          <span>⏳</span> Accruals & Prepayments
+        </button>
+        <button class="tab-btn" data-target="tabBudgetVariance">
+          <span>🎯</span> Actual vs Budget Variance
+        </button>
+        <button class="tab-btn" data-target="tabRatios">
+          <span>📐</span> Financial Analysis & Ratios
+        </button>
+        <button class="tab-btn" data-target="tabTaxation">
+          <span>📑</span> Tax Compliance & Provisions
+        </button>
+        <button class="tab-btn" data-target="tabInternalControls">
+          <span>🛡️</span> Internal Controls & Error Check
+        </button>
+        <button class="tab-btn" data-target="tabAuditSchedules">
+          <span>📋</span> Audit Pack & Schedules
+        </button>
+        <button class="tab-btn" data-target="tabExecutiveReview">
+          <span>✍️</span> Bookkeeper Entries Review
+        </button>
+        <button class="tab-btn" data-target="tabPolicies">
+          <span>📜</span> Accounting Policies & GAAP
+        </button>
+      </div>
+    </div>
+
+    <!-- TAB 1: PROFIT & LOSS STATEMENT -->
+    <div class="tab-panel active" id="tabPnL">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title"><span>📊</span> Profit & Loss Statement (Income Statement)</div>
+            <div class="card-desc">For the period ended 2026-12-31 • Compliant with IAS 1 & US GAAP Presentation</div>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="window.print()">🖨️ Print Statement</button>
+        </div>
+
+        <table class="statement-table">
+          <thead>
+            <tr>
+              <th>Account Classification</th>
+              <th class="text-right">Period Amount ($)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Revenue -->
+            <tr class="statement-category"><td colspan="2">1. Operating Revenue</td></tr>
+            <tbody id="pnlRevenueBody"></tbody>
+            <tr class="statement-subtotal">
+              <td>Total Gross Revenue</td>
+              <td class="text-right mono" style="font-weight:700;" id="pnlTotalRevenue">$0.00</td>
+            </tr>
+
+            <!-- Cost of Goods Sold -->
+            <tr class="statement-category"><td colspan="2">2. Cost of Goods Sold (Direct Costs)</td></tr>
+            <tbody id="pnlCogsBody"></tbody>
+            <tr class="statement-subtotal">
+              <td>Total Cost of Goods Sold</td>
+              <td class="text-right mono" style="font-weight:700;" id="pnlTotalCogs">$0.00</td>
+            </tr>
+
+            <!-- Gross Profit -->
+            <tr class="statement-subtotal" style="background:rgba(59, 130, 246, 0.08);font-size:1.05rem;">
+              <td style="font-weight:800;color:var(--primary);">GROSS PROFIT</td>
+              <td class="text-right mono" style="font-weight:800;color:var(--primary);" id="pnlGrossProfit">$0.00</td>
+            </tr>
+
+            <!-- Operating Expenses -->
+            <tr class="statement-category"><td colspan="2">3. Operating & Administrative Expenses</td></tr>
+            <tbody id="pnlExpensesBody"></tbody>
+            <tr class="statement-subtotal">
+              <td>Total Operating Expenses</td>
+              <td class="text-right mono" style="font-weight:700;" id="pnlTotalOperatingExp">$0.00</td>
+            </tr>
+
+            <!-- Operating Income -->
+            <tr class="statement-subtotal" style="font-size:1.05rem;">
+              <td style="font-weight:700;">OPERATING INCOME (EBIT)</td>
+              <td class="text-right mono" style="font-weight:700;" id="pnlOperatingIncome">$0.00</td>
+            </tr>
+
+            <!-- Tax Provision -->
+            <tr class="statement-category"><td colspan="2">4. Income Tax Expense Provision</td></tr>
+            <tr class="statement-row">
+              <td>Estimated Corporate Income Tax Expense</td>
+              <td class="text-right mono" id="pnlTaxExpense">$0.00</td>
+            </tr>
+
+            <!-- Net Profit / Loss -->
+            <tr class="statement-grandtotal">
+              <td>NET PROFIT / (LOSS) FOR THE PERIOD</td>
+              <td class="text-right mono" id="pnlNetIncome">$0.00</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 2: BALANCE SHEET -->
+    <div class="tab-panel" id="tabBalanceSheet">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title"><span>🏛️</span> Statement of Financial Position (Balance Sheet)</div>
+            <div class="card-desc">As of current date • Assets = Liabilities + Shareholder Equity</div>
+          </div>
+          <span class="badge badge-success" id="bsBalanceStatusBadge">✓ PERFECTLY BALANCED</span>
+        </div>
+
+        <table class="statement-table">
+          <thead>
+            <tr>
+              <th>Financial Position Line Item</th>
+              <th class="text-right">Balance ($)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Assets Header -->
+            <tr class="statement-category"><td colspan="2">ASSETS</td></tr>
+            <tr class="statement-subheading"><td colspan="2">Current Assets</td></tr>
+            <tbody id="bsCurrentAssetsBody"></tbody>
+
+            <tr class="statement-subheading"><td colspan="2">Non-Current / Fixed Assets</td></tr>
+            <tbody id="bsFixedAssetsBody"></tbody>
+
+            <tr class="statement-grandtotal" style="background:rgba(16, 185, 129, 0.1);border-color:var(--success);color:var(--success);">
+              <td>TOTAL ASSETS</td>
+              <td class="text-right mono" id="bsTotalAssets">$0.00</td>
+            </tr>
+
+            <!-- Liabilities Header -->
+            <tr class="statement-category"><td colspan="2">LIABILITIES</td></tr>
+            <tr class="statement-subheading"><td colspan="2">Current Liabilities</td></tr>
+            <tbody id="bsCurrentLiabilitiesBody"></tbody>
+
+            <!-- Equity Header -->
+            <tr class="statement-category"><td colspan="2">SHAREHOLDER EQUITY</td></tr>
+            <tbody id="bsEquityBody"></tbody>
+
+            <!-- Total Liab + Equity -->
+            <tr class="statement-grandtotal" style="background:rgba(59, 130, 246, 0.1);border-color:var(--primary);color:var(--primary);">
+              <td>TOTAL LIABILITIES & EQUITY</td>
+              <td class="text-right mono" id="bsTotalLiabilitiesAndEquity">$0.00</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 3: CASH FLOW STATEMENT -->
+    <div class="tab-panel" id="tabCashFlow">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title"><span>🌊</span> Statement of Cash Flows (Indirect Method)</div>
+            <div class="card-desc">Operating, Investing & Financing Cash Movements Reconciliation</div>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="window.print()">🖨️ Print Cash Flow</button>
+        </div>
+
+        <table class="statement-table">
+          <thead>
+            <tr>
+              <th>Cash Flow Activity</th>
+              <th class="text-right">Cash Inflow / (Outflow) ($)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Operating -->
+            <tr class="statement-category"><td colspan="2">1. Cash Flows from Operating Activities</td></tr>
+            <tr class="statement-row"><td>Net Operating Income</td><td class="text-right mono" id="cfNetIncome">$0.00</td></tr>
+            <tr class="statement-row"><td>Add: Non-Cash Depreciation Expense</td><td class="text-right mono" id="cfDepExpense">$0.00</td></tr>
+            <tr class="statement-row"><td>(Increase) / Decrease in Accounts Receivable</td><td class="text-right mono" id="cfArChange">$0.00</td></tr>
+            <tr class="statement-row"><td>Increase / (Decrease) in Accounts Payable</td><td class="text-right mono" id="cfApChange">$0.00</td></tr>
+            <tr class="statement-row"><td>(Increase) / Decrease in Merchandise Inventory</td><td class="text-right mono" id="cfInvChange">$0.00</td></tr>
+            <tr class="statement-row"><td>Increase / (Decrease) in Tax Payable</td><td class="text-right mono" id="cfTaxPayChange">$0.00</td></tr>
+            <tr class="statement-subtotal">
+              <td style="font-weight:700;">Net Cash Generated by Operating Activities</td>
+              <td class="text-right mono" style="font-weight:700;color:var(--success);" id="cfNetOperating">$0.00</td>
+            </tr>
+
+            <!-- Investing -->
+            <tr class="statement-category"><td colspan="2">2. Cash Flows from Investing Activities</td></tr>
+            <tr class="statement-row"><td>Acquisition of Fixed Assets (Capex)</td><td class="text-right mono" id="cfNetInvesting">$0.00</td></tr>
+            <tr class="statement-subtotal">
+              <td style="font-weight:700;">Net Cash Used in Investing Activities</td>
+              <td class="text-right mono" style="font-weight:700;" id="cfNetInvesting">$0.00</td>
+            </tr>
+
+            <!-- Financing -->
+            <tr class="statement-category"><td colspan="2">3. Cash Flows from Financing Activities</td></tr>
+            <tr class="statement-row"><td>Proceeds from Equity Capital / Loan Drawdowns</td><td class="text-right mono" id="cfNetFinancing">$0.00</td></tr>
+            <tr class="statement-subtotal">
+              <td style="font-weight:700;">Net Cash Generated by Financing Activities</td>
+              <td class="text-right mono" style="font-weight:700;" id="cfNetFinancing">$0.00</td>
+            </tr>
+
+            <!-- Ending Cash -->
+            <tr class="statement-grandtotal">
+              <td>NET CHANGE IN CASH & EQUIVALENTS</td>
+              <td class="text-right mono" id="cfNetChange">$0.00</td>
+            </tr>
+            <tr class="statement-subtotal" style="font-size:1.1rem;background:rgba(255,255,255,0.04);">
+              <td style="font-weight:800;">CASH & CASH EQUIVALENTS AT END OF PERIOD</td>
+              <td class="text-right mono" style="font-weight:800;color:var(--primary);" id="cfEndingCash">$0.00</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 4: FIXED ASSETS & DEPRECIATION -->
+    <div class="tab-panel" id="tabFixedAssets">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title"><span>🏗️</span> Fixed Asset Register & Automated Depreciation</div>
+            <div class="card-desc">Asset capitalization, accumulated depreciation tracking & net book value (NBV)</div>
+          </div>
+          <div style="display:flex;gap:0.5rem;">
+            <button class="btn btn-secondary btn-sm" onclick="openModal('modalNewAsset')">➕ Add Asset</button>
+            <button class="btn btn-primary btn-sm" onclick="document.getElementById('btnRunDepreciation').click()">⚙️ Post Monthly Dep</button>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Asset Name</th>
+                <th>Purchase Date</th>
+                <th>Depreciation Method</th>
+                <th class="text-right">Original Cost</th>
+                <th class="text-right">Salvage Value</th>
+                <th class="text-right">Acc. Depreciation</th>
+                <th class="text-right">Net Book Value</th>
+                <th>Last Dep Date</th>
+              </tr>
+            </thead>
+            <tbody id="fixedAssetsTableBody">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 5: ACCRUALS & PREPAYMENTS -->
+    <div class="tab-panel" id="tabAccruals">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title"><span>⏳</span> Accruals & Prepayments Schedule</div>
+            <div class="card-desc">Matching principle compliance: spread multi-month insurance, rents and subscriptions</div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="document.getElementById('btnRunAmortization').click()">⚙️ Run Monthly Amortization</button>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Schedule Item</th>
+                <th>Accounting Type</th>
+                <th>Amortization Term</th>
+                <th class="text-right">Total Contract</th>
+                <th class="text-right">Amortized to Date</th>
+                <th class="text-right">Remaining Balance</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="accrualsTableBody">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 6: BUDGET VS ACTUAL VARIANCE -->
+    <div class="tab-panel" id="tabBudgetVariance">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title"><span>🎯</span> Actual vs Budget Variance Analysis</div>
+            <div class="card-desc">Comparison of general ledger performance against annual budget targets</div>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>Budget Line Item</th>
+                <th>Category</th>
+                <th class="text-right">Target Budget ($)</th>
+                <th class="text-right">Actual YTD ($)</th>
+                <th class="text-right">Variance ($ & %)</th>
+                <th>Performance Impact</th>
+              </tr>
+            </thead>
+            <tbody id="budgetVarianceTableBody">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 7: FINANCIAL ANALYSIS & RATIOS -->
+    <div class="tab-panel" id="tabRatios">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title"><span>📐</span> Financial Performance & Health Ratios</div>
+            <div class="card-desc">Key metrics for management analysis, creditworthiness and board reporting</div>
+          </div>
+        </div>
+
+        <div class="stats-grid" style="grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));">
+          <div class="ratio-card">
+            <div class="ratio-name">Current Ratio</div>
+            <div class="ratio-value" id="ratioCurrentCard">0.00</div>
+            <div class="ratio-bench" style="color:var(--success);">Benchmark: 1.5 - 2.5</div>
+          </div>
+          <div class="ratio-card">
+            <div class="ratio-name">Acid-Test / Quick</div>
+            <div class="ratio-value" id="ratioQuickCard">0.00</div>
+            <div class="ratio-bench" style="color:var(--success);">Benchmark: > 1.0</div>
+          </div>
+          <div class="ratio-card">
+            <div class="ratio-name">Debt-to-Equity</div>
+            <div class="ratio-value" id="ratioDebtEquityCard">0.00</div>
+            <div class="ratio-bench" style="color:var(--primary);">Solvency Indicator</div>
+          </div>
+          <div class="ratio-card">
+            <div class="ratio-name">Gross Profit Margin</div>
+            <div class="ratio-value" id="ratioGrossMargin">0.0%</div>
+            <div class="ratio-bench" style="color:var(--purple);">Pricing Power</div>
+          </div>
+          <div class="ratio-card">
+            <div class="ratio-name">Net Profit Margin</div>
+            <div class="ratio-value" id="ratioNetMarginCard">0.0%</div>
+            <div class="ratio-bench" style="color:var(--success);">Bottom-Line Return</div>
+          </div>
+          <div class="ratio-card">
+            <div class="ratio-name">Return on Assets</div>
+            <div class="ratio-value" id="ratioROACard">0.0%</div>
+            <div class="ratio-bench" style="color:var(--primary);">Capital Efficiency</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 8: TAXATION & COMPLIANCE -->
+    <div class="tab-panel" id="tabTaxation">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title"><span>📑</span> Tax Compliance & Corporate Provisions</div>
+            <div class="card-desc">Sales Tax (VAT/GST) liability summaries and Corporate Income Tax provisions</div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:1.5rem;">
+          <div style="border:1px solid var(--border-color);border-radius:var(--radius-md);padding:1.5rem;background:var(--bg-secondary);">
+            <h3 style="color:var(--warning);margin-bottom:0.75rem;">🏛️ Sales Tax / VAT / GST Liability</h3>
+            <p style="font-size:0.85rem;margin-bottom:1rem;">Accumulated sales tax collected on customer invoices less any input tax credits:</p>
+            <div style="margin-bottom:0.75rem;">
+              <span style="color:var(--text-muted);">Current Tax Payable (Account 2030):</span>
+              <div class="mono" style="font-size:1.8rem;font-weight:700;color:var(--warning);" id="taxVatPayable">$0.00</div>
+            </div>
+            <span class="badge badge-success">✓ Ready for Monthly Filing</span>
+          </div>
+
+          <div style="border:1px solid var(--border-color);border-radius:var(--radius-md);padding:1.5rem;background:var(--bg-secondary);">
+            <h3 style="color:var(--primary);margin-bottom:0.75rem;">🏢 Corporate Income Tax Provision</h3>
+            <p style="font-size:0.85rem;margin-bottom:1rem;">Estimated corporate income tax liability based on taxable operating profit (21% statutory rate):</p>
+            <div style="margin-bottom:0.75rem;">
+              <span style="color:var(--text-muted);">Taxable Operating Base:</span>
+              <div class="mono" style="font-weight:600;" id="taxTaxableIncome">$0.00</div>
+            </div>
+            <div style="margin-bottom:0.75rem;">
+              <span style="color:var(--text-muted);">Estimated Tax Expense Provision:</span>
+              <div class="mono" style="font-size:1.8rem;font-weight:700;color:var(--primary);" id="taxCorpEstimate">$0.00</div>
+            </div>
+            <span class="badge badge-primary">Auto-synced with Income Statement</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 9: INTERNAL CONTROLS & DIAGNOSTICS -->
+    <div class="tab-panel" id="tabInternalControls">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title"><span>🛡️</span> Internal Controls & Financial Error Diagnostics</div>
+            <div class="card-desc">Automatic audit scanner for unbalanced entries, negative cash, or out-of-period items</div>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="renderInternalControlsAudit()">🔄 Run Diagnostic Scan</button>
+        </div>
+
+        <div id="internalControlsList">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 10: AUDIT SCHEDULES & QUERIES -->
+    <div class="tab-panel" id="tabAuditSchedules">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title"><span>📋</span> Audit Pack & External Auditor Query Log</div>
+            <div class="card-desc">Document repository, lead schedules and formal query resolution tracker</div>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="openModal('modalNewQuery')">➕ Log Auditor Query</button>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Auditor / Firm</th>
+                <th>Subject / Schedule</th>
+                <th>Auditor Question</th>
+                <th>Accountant Response</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="auditQueriesTableBody">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 11: EXECUTIVE REVIEW -->
+    <div class="tab-panel" id="tabExecutiveReview">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title"><span>✍️</span> Bookkeeper Transaction Review & Approval Log</div>
+            <div class="card-desc">Chief Accountant sign-off and formal endorsement of all posted ledger items</div>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Voucher #</th>
+                <th>Source</th>
+                <th>Description</th>
+                <th class="text-right">Amount</th>
+                <th>Status</th>
+                <th class="text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="executiveReviewTableBody">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 12: POLICIES & GAAP -->
+    <div class="tab-panel" id="tabPolicies">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title"><span>📜</span> Corporate Accounting Policies & Governance</div>
+            <div class="card-desc">IFRS & US GAAP Compliance Principles governing Accumen Pro</div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;font-size:0.9rem;">
+          <div style="border:1px solid var(--border-color);border-radius:var(--radius-md);padding:1.25rem;">
+            <h4 style="color:var(--primary);margin-bottom:0.5rem;">1. Revenue Recognition (IFRS 15 / ASC 606)</h4>
+            <p>Revenue is recognized upon satisfaction of performance obligations when control of goods or services is transferred to the customer. All invoiced revenues are recorded net of discounts and sales taxes.</p>
+          </div>
+
+          <div style="border:1px solid var(--border-color);border-radius:var(--radius-md);padding:1.25rem;">
+            <h4 style="color:var(--primary);margin-bottom:0.5rem;">2. Property, Plant & Equipment (IAS 16 / ASC 360)</h4>
+            <p>Fixed assets are capitalized at acquisition cost less accumulated depreciation. Depreciation is computed systematically over useful asset lives (Straight-Line or Declining-Balance) down to salvage value.</p>
+          </div>
+
+          <div style="border:1px solid var(--border-color);border-radius:var(--radius-md);padding:1.25rem;">
+            <h4 style="color:var(--primary);margin-bottom:0.5rem;">3. Accrual Basis of Accounting (IAS 1)</h4>
+            <p>Transactions are recorded in the periods in which they occur, regardless of when cash is received or disbursed. Prepayments and accrued expenses are amortized using standard monthly amortization schedules.</p>
+          </div>
+
+          <div style="border:1px solid var(--border-color);border-radius:var(--radius-md);padding:1.25rem;">
+            <h4 style="color:var(--primary);margin-bottom:0.5rem;">4. Segregation of Duties & Dual Control</h4>
+            <p>Routine operations are recorded by the Bookkeeper and formally reviewed, validated, and closed by the Chief Accountant to guarantee internal controls and zero financial fraud.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ==============================================================
+       MODALS FOR ACCOUNTANT SUITE
+  ============================================================== -->
+
+  <!-- Modal: Register Fixed Asset -->
+  <div class="modal-overlay" id="modalNewAsset">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">🏗️ Register New Fixed Asset in Capital Register</div>
+        <button class="modal-close" onclick="closeModal('modalNewAsset')">&times;</button>
+      </div>
+      <form id="formNewAsset">
+        <div class="modal-body">
+          <div class="form-grid">
+            <div class="form-group full-width">
+              <label>Asset Name *</label>
+              <input type="text" id="assetName" placeholder="e.g. Dell Enterprise Server Rack" required>
+            </div>
+            <div class="form-group">
+              <label>Acquisition Cost ($) *</label>
+              <input type="number" id="assetCost" placeholder="0.00" step="0.01" required>
+            </div>
+            <div class="form-group">
+              <label>Estimated Salvage Value ($)</label>
+              <input type="number" id="assetSalvage" placeholder="0.00" step="0.01" value="0">
+            </div>
+            <div class="form-group">
+              <label>Useful Life (Years) *</label>
+              <input type="number" id="assetLife" value="5" min="1" max="50" required>
+            </div>
+            <div class="form-group">
+              <label>Depreciation Method</label>
+              <select id="assetMethod">
+                <option value="Straight-Line">Straight-Line Method</option>
+                <option value="Declining-Balance">Declining-Balance Method</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Purchase Date *</label>
+              <input type="date" id="assetPurchaseDate" required>
+            </div>
+            <div class="form-group">
+              <label>Asset Ledger Account</label>
+              <select id="assetAccountCode">
+                <option value="1510">1510 - Office Equipment & Computers</option>
+                <option value="1530">1530 - Furniture & Fixtures</option>
+                <option value="1550">1550 - Commercial Vehicles</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Contra Depreciation Account</label>
+              <select id="assetContraAccountCode">
+                <option value="1520">1520 - Acc. Dep. Equipment</option>
+                <option value="1540">1540 - Acc. Dep. Furniture</option>
+                <option value="1560">1560 - Acc. Dep. Vehicles</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('modalNewAsset')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Capitalize & Register Asset</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Log Auditor Query -->
+  <div class="modal-overlay" id="modalNewQuery">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">📋 Document External Auditor Query</div>
+        <button class="modal-close" onclick="closeModal('modalNewQuery')">&times;</button>
+      </div>
+      <form id="formNewQuery">
+        <div class="modal-body">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Auditing Firm / Auditor *</label>
+              <input type="text" id="queryAuditor" placeholder="e.g. PwC or KPMG" required>
+            </div>
+            <div class="form-group">
+              <label>Subject / Schedule *</label>
+              <input type="text" id="querySubject" placeholder="e.g. Revenue Recognition Sample Test" required>
+            </div>
+            <div class="form-group full-width">
+              <label>Auditor's Query / Finding *</label>
+              <textarea id="queryText" placeholder="State the question or request for supporting schedule" required></textarea>
+            </div>
+            <div class="form-group full-width">
+              <label>Accountant Resolution / Response</label>
+              <textarea id="queryResponse" placeholder="Provide accounting explanation or attach reference documentation"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('modalNewQuery')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save to Audit Pack</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/accounting-engine.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/accounting.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const today = new Date().toISOString().split('T')[0];
+      const pDate = document.getElementById('assetPurchaseDate');
+      if (pDate) pDate.value = today;
+
+      // Duplicate ratio values for quick cards
+      const rCur = document.getElementById('ratioCurrent');
+      const rCurCard = document.getElementById('ratioCurrentCard');
+      if (rCur && rCurCard) rCurCard.textContent = rCur.textContent;
+
+      const rQ = document.getElementById('ratioQuick');
+      const rQCard = document.getElementById('ratioQuickCard');
+      if (rQ && rQCard) rQCard.textContent = rQ.textContent;
+
+      const rDE = document.getElementById('ratioDebtEquity');
+      const rDECard = document.getElementById('ratioDebtEquityCard');
+      if (rDE && rDECard) rDECard.textContent = rDE.textContent;
+
+      const rNM = document.getElementById('ratioNetMargin');
+      const rNMCard = document.getElementById('ratioNetMarginCard');
+      if (rNM && rNMCard) rNMCard.textContent = rNM.textContent;
+
+      const rROA = document.getElementById('ratioROA');
+      const rROACard = document.getElementById('ratioROACard');
+      if (rROA && rROACard) rROACard.textContent = rROA.textContent;
+    });
+  </script>
+</body>
+</html>

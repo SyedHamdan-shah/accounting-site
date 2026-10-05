@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bookkeeper Operations Portal - Accumen Pro</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Dynamic Navigation Bar -->
+  <div id="navPlaceholder"></div>
+
+  <main class="container">
+    <!-- Header with Quick Action Triggers -->
+    <div class="page-header">
+      <div class="page-title-group">
+        <h1>
+          <span>📑</span>
+          <span>Bookkeeper Operations Workspace</span>
+        </h1>
+        <p class="page-subtitle">Daily Financial Recording, Automated Double-Entry, Invoicing, Bills & Reconciliations</p>
+      </div>
+
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+        <button class="btn btn-primary" onclick="openModal('modalNewInvoice')">
+          <span>➕</span> New Sales Invoice
+        </button>
+        <button class="btn btn-secondary" onclick="openModal('modalNewBill')">
+          <span>🧾</span> New Purchase Bill
+        </button>
+        <button class="btn btn-success" onclick="openModal('modalNewExpense')">
+          <span>💸</span> Record Expense
+        </button>
+        <button class="btn btn-secondary" onclick="openModal('modalCashBankTransfer')">
+          <span>🔄</span> Transfer Funds
+        </button>
+        <button class="btn btn-secondary" onclick="openModal('modalPayrollRun')">
+          <span>👥</span> Process Payroll
+        </button>
+        <button class="btn btn-secondary" onclick="openModal('modalManualJournal')">
+          <span>⚖️</span> Journal Voucher
+        </button>
+      </div>
+    </div>
+
+    <!-- Quick Stats Bar -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-header">
+          <span class="stat-title">Petty Cash In Hand</span>
+          <div class="stat-icon">💵</div>
+        </div>
+        <div class="stat-val" id="pettyCashBalance">$0.00</div>
+        <div class="stat-footer">Ledger Account 1010</div>
+      </div>
+
+      <div class="stat-card success">
+        <div class="stat-header">
+          <span class="stat-title">Main Operating Bank</span>
+          <div class="stat-icon">🏛️</div>
+        </div>
+        <div class="stat-val" id="mainBankBalance">$0.00</div>
+        <div class="stat-footer">Ledger Account 1020</div>
+      </div>
+
+      <div class="stat-card warning">
+        <div class="stat-header">
+          <span class="stat-title">Total Receivables (A/R)</span>
+          <div class="stat-icon">📥</div>
+        </div>
+        <div class="stat-val" id="arTotalBalance">$0.00</div>
+        <div class="stat-footer">Customer Invoices Outstanding</div>
+      </div>
+
+      <div class="stat-card danger">
+        <div class="stat-header">
+          <span class="stat-title">Total Payables (A/P)</span>
+          <div class="stat-icon">📤</div>
+        </div>
+        <div class="stat-val" id="apTotalBalance">$0.00</div>
+        <div class="stat-footer">Vendor Bills Due</div>
+      </div>
+    </div>
+
+    <!-- Bookkeeper Tabs Navigation -->
+    <div class="tabs-container">
+      <div class="tabs-list">
+        <button class="tab-btn active" data-target="tabInvoices">
+          <span>📄</span> Sales & Invoices
+        </button>
+        <button class="tab-btn" data-target="tabBills">
+          <span>🧾</span> Bills & Purchases
+        </button>
+        <button class="tab-btn" data-target="tabCashBank">
+          <span>🏦</span> Cash & Bank Book
+        </button>
+        <button class="tab-btn" data-target="tabReceivables">
+          <span>📥</span> A/R & Customer Aging
+        </button>
+        <button class="tab-btn" data-target="tabPayables">
+          <span>📤</span> A/P & Vendor Aging
+        </button>
+        <button class="tab-btn" data-target="tabExpenses">
+          <span>📊</span> Expense Categorization
+        </button>
+        <button class="tab-btn" data-target="tabPayroll">
+          <span>👥</span> Payroll Entries
+        </button>
+        <button class="tab-btn" data-target="tabNotes">
+          <span>📝</span> Credit & Debit Notes
+        </button>
+        <button class="tab-btn" data-target="tabJournals">
+          <span>⚖️</span> Journal Entries
+        </button>
+        <button class="tab-btn" data-target="tabLedger">
+          <span>📖</span> General Ledger
+        </button>
+        <button class="tab-btn" data-target="tabTrialBalance">
+          <span>⚖️</span> Trial Balance
+        </button>
+        <button class="tab-btn" data-target="tabReconciliation">
+          <span>🔍</span> Bank & Cash Rec
+        </button>
+        <button class="tab-btn" data-target="tabOrganizer">
+          <span>🗂️</span> Document Organizer
+        </button>
+        <button class="tab-btn" data-target="tabClosingHelp">
+          <span>✅</span> Month-End Closing Prep
+        </button>
+      </div>
+    </div>
+
+    <!-- TAB 1: INVOICES & SALES -->
+    <div class="tab-panel active" id="tabInvoices">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title"><span>📄</span> Sales Invoices Register</div>
+            <div class="card-desc">Every invoice auto-credits Sales Revenue (4010), Sales Tax (2030) and debits A/R (1030)</div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openModal('modalNewInvoice')">➕ Create Invoice</button>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Invoice #</th>
+                <th>Issue Date</th>
+                <th>Customer Name</th>
+                <th class="text-right">Total Amount</th>
+                <th class="text-right">Balance Due</th>
+                <th>Payment Status</th>
+                <th class="text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="invoicesTableBody">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: BILLS & PURCHASES -->
+    <div class="tab-panel" id="tabBills">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title"><span>🧾</span> Purchase Bills & Expenses Payable</div>
+            <div class="card-desc">Every bill debits Expense / COGS and credits Accounts Payable (2010)</div>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="openModal('modalNewBill')">➕ Record Bill</button>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Bill #</th>
+                <th>Bill Date</th>
+                <th>Vendor / Supplier</th>
+                <th>Expense Category</th>
+                <th class="text-right">Total Amount</th>
+                <th class="text-right">Balance Due</th>
+                <th>Status</th>
+                <th class="text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="billsTableBody">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: CASH & BANK MANAGEMENT -->
+    <div class="tab-panel" id="tabCashBank">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title"><span>🏦</span> Cash & Bank Book Transactions</div>
+            <div class="card-desc">Chronological ledger of all inflows, disbursements and inter-account transfers</div>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="openModal('modalCashBankTransfer')">🔄 Transfer Cash / Bank</button>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Reference</th>
+                <th>Account</th>
+                <th>Description</th>
+                <th class="text-right">Inflow (Debit)</th>
+                <th class="text-right">Outflow (Credit)</th>
+                <th class="text-right">Running Balance</th>
+              </tr>
+            </thead>
+            <tbody id="cashBankTxTableBody">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: ACCOUNTS RECEIVABLE (A/R) AGING -->
+    <div class="tab-panel" id="tabReceivables">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title"><span>📥</span> Accounts Receivable (Customer Aging Schedule)</div>
+            <div class="card-desc">Aging breakdown of customer debts to manage cash collection and credit control</div>
+          </div>
+        </div>
+
+        <div class="stats-grid" style="grid-template-columns:repeat(5, 1fr);margin-bottom:1.5rem;">
+          <div class="stat-card">
+            <span class="stat-title">Current</span>
+            <div class="stat-val" style="font-size:1.4rem;" id="arCurrent">$0.00</div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-title">1 - 30 Days</span>
+            <div class="stat-val" style="font-size:1.4rem;" id="ar30">$0.00</div>
+          </div>
+          <div class="stat-card warning">
+            <span class="stat-title">31 - 60 Days</span>
+            <div class="stat-val" style="font-size:1.4rem;" id="ar60">$0.00</div>
+          </div>
+          <div class="stat-card warning">
+            <span class="stat-title">61 - 90 Days</span>
+            <div class="stat-val" style="font-size:1.4rem;" id="ar90">$0.00</div>
+          </div>
+          <div class="stat-card danger">
+            <span class="stat-title">90+ Days (Overdue)</span>
+            <div class="stat-val" style="font-size:1.4rem;" id="arOver90">$0.00</div>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Invoice #</th>
+                <th>Customer</th>
+                <th>Due Date</th>
+                <th>Aging Bracket</th>
+                <th class="text-right">Original Amount</th>
+                <th class="text-right">Outstanding Due</th>
+              </tr>
+            </thead>
+            <tbody id="arAgingTableBody">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 5: ACCOUNTS PAYABLE (A/P) AGING -->
+    <div class="tab-panel" id="tabPayables">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title"><span>📤</span> Accounts Payable (Vendor Aging Schedule)</div>
+            <div class="card-desc">Outstanding supplier liabilities categorized by payment due maturity</div>
+          </div>
+        </div>
+
+        <div class="stats-grid" style="grid-template-columns:repeat(5, 1fr);margin-bottom:1.5rem;">
+          <div class="stat-card">
+            <span class="stat-title">Current</span>
+            <div class="stat-val" style="font-size:1.4rem;" id="apCurrent">$0.00</div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-title">1 - 30 Days</span>
+            <div class="stat-val" style="font-size:1.4rem;" id="ap30">$0.00</div>
+          </div>
+          <div class="stat-card warning">
+            <span class="stat-title">31 - 60 Days</span>
+            <div class="stat-val" style="font-size:1.4rem;" id="ap60">$0.00</div>
+          </div>
+          <div class="stat-card warning">
+            <span class="stat-title">61 - 90 Days</span>
+            <div class="stat-val" style="font-size:1.4rem;" id="ap90">$0.00</div>
+          </div>
+          <div class="stat-card danger">
+            <span class="stat-title">90+ Days</span>
+            <div class="stat-val" style="font-size:1.4rem;" id="apOver90">$0.00</div>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Bill #</th>
+                <th>Supplier / Vendor</th>
+                <th>Due Date</th>
+                <th>Aging Status</th>
+                <th class="text-right">Original Amount</th>
+                <th class="text-right">Remaining Balance</th>
+              </tr>
+            </thead>
+            <tbody id="apAgingTableBody">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 6: EXPENSE CATEGORIZATION -->
+    <div class="tab-panel" id="tabExpenses">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title"><span>📊</span> Operational Expense Categorization</div>
+            <div class="card-desc">Chart of Accounts expense distribution synced with general ledger</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:1rem;">
+            <div>Total Expenses YTD: <span class="mono" style="font-weight:700;color:var(--danger);" id="totalExpensesDisplay">$0.00</span></div>
+            <button class="btn btn-success btn-sm" onclick="openModal('modalNewExpense')">➕ Record Expense</button>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Account Code</th>
+                <th>Category Name</th>
+                <th>Expense Classification</th>
+                <th class="text-right">Total Incurred YTD</th>
+                <th class="text-right">Ledger Inspection</th>
+              </tr>
+            </thead>
+            <tbody id="expensesTableBody">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 7: PAYROLL PROCESSING -->
+    <div class="tab-panel" id="tabPayroll">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title"><span>👥</span> Employee Payroll Processing & Salary Entries</div>
+            <div class="card-desc">Salary expense debit, statutory withholding credit, net salary disbursement</div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openModal('modalPayrollRun')">➕ New Payroll Run</button>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Pay Date</th>
+                <th>Run Reference</th>
+                <th>Period Description</th>
+                <th class="text-right">Gross Salary Expense (DR)</th>
+                <th class="text-right">Tax Withholding (CR)</th>
+                <th class="text-right">Net Disbursed (CR)</th>
+              </tr>
+            </thead>
+            <tbody id="payrollTableBody">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 8: CREDIT & DEBIT NOTES -->
+    <div class="tab-panel" id="tabNotes">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title"><span>📝</span> Credit & Debit Notes Register</div>
+            <div class="card-desc">Customer sales returns (Credit Notes) & Supplier purchase returns (Debit Notes)</div>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="openModal('modalNewNote')">➕ Issue Note</button>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Note Reference</th>
+                <th>Classification</th>
+                <th>Reason / Description</th>
+                <th class="text-right">Adjustment Amount</th>
+              </tr>
+            </thead>
+            <tbody id="notesTableBody">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 9: JOURNAL ENTRIES -->
+    <div class="tab-panel" id="tabJournals">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title"><span>⚖️</span> General Journal Vouchers</div>
+            <div class="card-desc">Audit-proof double-entry transaction journal with automated debit/credit balancing</div>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="openModal('modalManualJournal')">➕ Manual Journal Voucher</button>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Posting Date</th>
+                <th>Voucher #</th>
+                <th>Origin Source</th>
+                <th>Transaction Particulars & Debits/Credits</th>
+                <th class="text-right">Total Debit/Credit</th>
+                <th>Approval</th>
+              </tr>
+            </thead>
+            <tbody id="journalTableBody">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 10: GENERAL LEDGER -->
+    <div class="tab-panel" id="tabLedger">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title"><span>📖</span> General Ledger Explorer</div>
+            <div class="card-desc" id="glAccountTitle">Select an account from the Chart of Accounts to inspect all postings</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:1rem;">
+            <select id="glAccountSelector" style="width:300px;font-weight:600;"></select>
+            <div style="font-weight:700;font-size:1.1rem;color:var(--primary);" id="glNetBalanceDisplay">$0.00</div>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Ref</th>
+                <th>Description</th>
+                <th>Source</th>
+                <th class="text-right">Debit ($)</th>
+                <th class="text-right">Credit ($)</th>
+                <th class="text-right">Running Net Balance</th>
+              </tr>
+            </thead>
+            <tbody id="glTableBody">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 11: TRIAL BALANCE -->
+    <div class="tab-panel" id="tabTrialBalance">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title"><span>⚖️</span> Real-Time Trial Balance</div>
+            <div class="card-desc">Mathematical proof of double-entry ledger equilibrium</div>
+          </div>
+          <span class="badge badge-success" id="tbStatusPill">✓ PERFECTLY BALANCED</span>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>Account Name</th>
+                <th>Account Type</th>
+                <th class="text-right">Debit Balance ($)</th>
+                <th class="text-right">Credit Balance ($)</th>
+              </tr>
+            </thead>
+            <tbody id="tbTableBody">
+              <!-- Rendered dynamically -->
+            </tbody>
+            <tfoot>
+              <tr style="background:var(--bg-tertiary);font-weight:800;border-top:2px solid var(--border-color);">
+                <td colspan="3" style="text-transform:uppercase;letter-spacing:0.05em;">Grand Totals</td>
+                <td class="text-right mono" id="tbDebitTotal" style="color:var(--primary);font-size:1.1rem;">$0.00</td>
+                <td class="text-right mono" id="tbCreditTotal" style="color:var(--primary);font-size:1.1rem;">$0.00</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 12: BANK & CASH RECONCILIATION -->
+    <div class="tab-panel" id="tabReconciliation">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title"><span>🔍</span> Bank & Cash Reconciliation Wizard</div>
+            <div class="card-desc">Compare book records against bank statements and physical cash counts</div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem;">
+          <!-- Bank Rec Box -->
+          <div style="border:1px solid var(--border-color);border-radius:var(--radius-md);padding:1.5rem;background:var(--bg-secondary);">
+            <h3 style="margin-bottom:0.75rem;color:var(--primary);">🏦 Bank Statement Reconciliation</h3>
+            <div style="margin-bottom:0.75rem;">
+              <span style="color:var(--text-muted);">Accumen General Ledger Bank Balance:</span>
+              <div class="mono" style="font-size:1.4rem;font-weight:700;" id="recBankBookBal">$0.00</div>
+            </div>
+            <div class="form-group" style="margin-bottom:0.75rem;">
+              <label>Bank Statement Ending Balance</label>
+              <input type="number" id="bankStatementInput" placeholder="Enter balance from bank statement" step="0.01">
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="runBankReconciliationTest()">Run Rec Check</button>
+            <div id="bankRecResult" style="margin-top:0.75rem;font-size:0.9rem;"></div>
+          </div>
+
+          <!-- Cash Rec Box -->
+          <div style="border:1px solid var(--border-color);border-radius:var(--radius-md);padding:1.5rem;background:var(--bg-secondary);">
+            <h3 style="margin-bottom:0.75rem;color:var(--success);">💵 Petty Cash Physical Count</h3>
+            <div style="margin-bottom:0.75rem;">
+              <span style="color:var(--text-muted);">Accumen Petty Cash Book Balance:</span>
+              <div class="mono" style="font-size:1.4rem;font-weight:700;" id="recCashBookBal">$0.00</div>
+            </div>
+            <div class="form-group" style="margin-bottom:0.75rem;">
+              <label>Actual Physical Cash Counted in Safe</label>
+              <input type="number" id="cashPhysicalInput" placeholder="Count notes & coins in drawer" step="0.01">
+            </div>
+            <button class="btn btn-success btn-sm" onclick="runCashReconciliationTest()">Verify Cash Float</button>
+            <div id="cashRecResult" style="margin-top:0.75rem;font-size:0.9rem;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 13: DOCUMENT ORGANIZER -->
+    <div class="tab-panel" id="tabOrganizer">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title"><span>🗂️</span> Financial Document & Invoice Organizer</div>
+            <div class="card-desc">Centralized repository of invoices, supplier bills, receipts and vouchers</div>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Document Ref</th>
+                <th>Type</th>
+                <th>Counterparty</th>
+                <th>Date</th>
+                <th class="text-right">Total Amount</th>
+                <th>Audit Status</th>
+                <th class="text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="docOrganizerBody">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 14: MONTH-END CLOSING PREP CHECKLIST -->
+    <div class="tab-panel" id="tabClosingHelp">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title"><span>✅</span> Bookkeeper Month-End Closing Checklist</div>
+            <div class="card-desc">Sequential preparation checklist before handing over to the Chief Accountant</div>
+          </div>
+        </div>
+
+        <div id="monthEndChecklistContainer">
+          <!-- Rendered dynamically -->
+        </div>
+
+        <div style="margin-top:1.5rem;text-align:right;">
+          <a href="accounting.html" class="btn btn-success">Proceed to Accountant Portal for Final Close &rarr;</a>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ==============================================================
+       MODALS FOR BOOKKEEPER DATA ENTRY
+  ============================================================== -->
+
+  <!-- Modal: New Sales Invoice -->
+  <div class="modal-overlay" id="modalNewInvoice">
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <div class="modal-title">📄 Generate New Sales Invoice</div>
+        <button class="modal-close" onclick="closeModal('modalNewInvoice')">&times;</button>
+      </div>
+      <form id="formNewInvoice">
+        <div class="modal-body">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Customer Name *</label>
+              <input type="text" id="invCustomer" placeholder="e.g. Apex Horizons Corp" required>
+            </div>
+            <div class="form-group">
+              <label>Customer Email</label>
+              <input type="email" id="invEmail" placeholder="billing@customer.com">
+            </div>
+            <div class="form-group">
+              <label>Invoice Date *</label>
+              <input type="date" id="invDate" required>
+            </div>
+            <div class="form-group">
+              <label>Payment Due Date *</label>
+              <input type="date" id="invDueDate" required>
+            </div>
+            <div class="form-group">
+              <label>Invoice Subtotal Amount ($) *</label>
+              <input type="number" id="invAmount" placeholder="0.00" step="0.01" required>
+            </div>
+            <div class="form-group">
+              <label>Sales Tax Rate (%)</label>
+              <input type="number" id="invTaxRate" value="10" step="0.1">
+            </div>
+            <div class="form-group full-width">
+              <label>Invoice Memo / Terms</label>
+              <textarea id="invNotes" placeholder="Payment due within 30 days. Thank you for your business."></textarea>
+            </div>
+          </div>
+          <div style="background:var(--bg-tertiary);padding:0.85rem;border-radius:var(--radius-md);font-size:0.85rem;color:var(--text-secondary);">
+            ⚡ <strong>Automated Double Entry Posting:</strong> DR 1030 Accounts Receivable (Total) | CR 4010 Sales Revenue (Subtotal) | CR 2030 Sales Tax (Tax).
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('modalNewInvoice')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Generate & Post Invoice</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: New Purchase Bill -->
+  <div class="modal-overlay" id="modalNewBill">
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <div class="modal-title">🧾 Record Supplier / Vendor Purchase Bill</div>
+        <button class="modal-close" onclick="closeModal('modalNewBill')">&times;</button>
+      </div>
+      <form id="formNewBill">
+        <div class="modal-body">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Vendor / Supplier Name *</label>
+              <input type="text" id="billVendor" placeholder="e.g. Cisco Systems or Amazon Web Services" required>
+            </div>
+            <div class="form-group">
+              <label>Category *</label>
+              <input type="text" id="billCategory" placeholder="e.g. Software, Office, Hardware" required>
+            </div>
+            <div class="form-group">
+              <label>Debit Expense Account *</label>
+              <select id="billExpenseAccount">
+                <option value="5010">5010 - Cost of Goods Sold (Direct Costs)</option>
+                <option value="6020">6020 - Office Rent Expense</option>
+                <option value="6030">6030 - Utilities & Internet</option>
+                <option value="6040">6040 - Marketing & Advertising</option>
+                <option value="6060">6060 - Office Supplies & Software</option>
+                <option value="6080">6080 - Professional Legal & Accounting</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Bill Subtotal ($) *</label>
+              <input type="number" id="billAmount" placeholder="0.00" step="0.01" required>
+            </div>
+            <div class="form-group">
+              <label>Bill Date *</label>
+              <input type="date" id="billDate" required>
+            </div>
+            <div class="form-group">
+              <label>Due Date *</label>
+              <input type="date" id="billDueDate" required>
+            </div>
+            <div class="form-group full-width">
+              <label>Notes</label>
+              <textarea id="billNotes" placeholder="Invoice reference number and purchase details"></textarea>
+            </div>
+          </div>
+          <div style="background:var(--bg-tertiary);padding:0.85rem;border-radius:var(--radius-md);font-size:0.85rem;color:var(--text-secondary);">
+            ⚡ <strong>Automated Double Entry Posting:</strong> DR Selected Expense Account | CR 2010 Accounts Payable (Vendor Liability).
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('modalNewBill')">Cancel</button>
+          <button type="submit" class="btn btn-secondary">Record Bill to A/P</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Record Expense -->
+  <div class="modal-overlay" id="modalNewExpense">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">💸 Record Direct Expense Voucher</div>
+        <button class="modal-close" onclick="closeModal('modalNewExpense')">&times;</button>
+      </div>
+      <form id="formNewExpense">
+        <div class="modal-body">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Expense Category Account *</label>
+              <select id="expCategory">
+                <option value="6020">6020 - Office Rent Expense</option>
+                <option value="6030">6030 - Utilities & Internet</option>
+                <option value="6040">6040 - Marketing & Advertising</option>
+                <option value="6060">6060 - Office Supplies & Software</option>
+                <option value="6070">6070 - Bank Charges & Fees</option>
+                <option value="6080">6080 - Professional Legal & Accounting</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Paid From *</label>
+              <select id="expPaymentMethod">
+                <option value="1020">1020 - Main Business Bank Account</option>
+                <option value="1010">1010 - Cash in Hand (Petty Cash)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Amount ($) *</label>
+              <input type="number" id="expAmount" step="0.01" required>
+            </div>
+            <div class="form-group">
+              <label>Date *</label>
+              <input type="date" id="expDate" required>
+            </div>
+            <div class="form-group">
+              <label>Payee / Vendor</label>
+              <input type="text" id="expPayee" placeholder="e.g. Star Office Mart">
+            </div>
+            <div class="form-group full-width">
+              <label>Description *</label>
+              <input type="text" id="expDesc" placeholder="e.g. Printer paper & high-speed fiber internet" required>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('modalNewExpense')">Cancel</button>
+          <button type="submit" class="btn btn-success">Post Expense Voucher</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Cash / Bank Transfer -->
+  <div class="modal-overlay" id="modalCashBankTransfer">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">🔄 Inter-Account Transfer (Cash / Bank)</div>
+        <button class="modal-close" onclick="closeModal('modalCashBankTransfer')">&times;</button>
+      </div>
+      <form id="formCashBankTransfer">
+        <div class="modal-body">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Transfer From *</label>
+              <select id="cbFrom">
+                <option value="1020">1020 - Main Bank Account</option>
+                <option value="1010">1010 - Cash in Hand (Petty Cash)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Transfer To *</label>
+              <select id="cbTo">
+                <option value="1010">1010 - Cash in Hand (Petty Cash Float)</option>
+                <option value="1020">1020 - Main Bank Account</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Transfer Amount ($) *</label>
+              <input type="number" id="cbAmount" step="0.01" required>
+            </div>
+            <div class="form-group">
+              <label>Transfer Date *</label>
+              <input type="date" id="cbDate" required>
+            </div>
+            <div class="form-group full-width">
+              <label>Memo / Purpose</label>
+              <input type="text" id="cbMemo" placeholder="e.g. Replenish weekly petty cash safe float">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('modalCashBankTransfer')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Execute Transfer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Process Payroll -->
+  <div class="modal-overlay" id="modalPayrollRun">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">👥 Process Monthly Employee Payroll Run</div>
+        <button class="modal-close" onclick="closeModal('modalPayrollRun')">&times;</button>
+      </div>
+      <form id="formPayrollRun">
+        <div class="modal-body">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Payroll Period *</label>
+              <input type="text" id="payrollPeriod" placeholder="e.g. March 2026" required>
+            </div>
+            <div class="form-group">
+              <label>Disbursement Date *</label>
+              <input type="date" id="payrollDate" required>
+            </div>
+            <div class="form-group">
+              <label>Total Gross Salaries ($) *</label>
+              <input type="number" id="payrollGross" placeholder="0.00" step="0.01" required>
+            </div>
+            <div class="form-group">
+              <label>Income Tax Withholding ($)</label>
+              <input type="number" id="payrollTax" placeholder="0.00" step="0.01">
+            </div>
+            <div class="form-group">
+              <label>Payment Channel</label>
+              <select id="payrollMethod">
+                <option value="Bank">Main Business Bank Account (Direct Deposit)</option>
+                <option value="Cash">Petty Cash In Hand</option>
+              </select>
+            </div>
+          </div>
+          <div style="background:var(--bg-tertiary);padding:0.85rem;border-radius:var(--radius-md);font-size:0.85rem;color:var(--text-secondary);">
+            ⚡ <strong>Automated Double Entry:</strong> DR 6010 Salaries Expense (Gross) | CR 2030 Tax Withholding | CR 1020 Bank (Net).
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('modalPayrollRun')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Post & Disburse Payroll</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Manual Journal Voucher -->
+  <div class="modal-overlay" id="modalManualJournal">
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <div class="modal-title">⚖️ Pass Manual Balanced Journal Voucher</div>
+        <button class="modal-close" onclick="closeModal('modalManualJournal')">&times;</button>
+      </div>
+      <form id="formManualJournal">
+        <div class="modal-body">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Date *</label>
+              <input type="date" id="jvDate" required>
+            </div>
+            <div class="form-group">
+              <label>Voucher Reference *</label>
+              <input type="text" id="jvRef" placeholder="e.g. JV-2026-05" required>
+            </div>
+            <div class="form-group full-width">
+              <label>Narration / Description *</label>
+              <input type="text" id="jvDescription" placeholder="Detailed accounting explanation" required>
+            </div>
+          </div>
+
+          <h4 style="margin:1rem 0 0.5rem 0;">Journal Entries (Total Debits must equal Total Credits)</h4>
+          <table class="items-table" id="journalLinesTable">
+            <thead>
+              <tr>
+                <th style="width:40%;">Account</th>
+                <th style="width:20%;">Debit ($)</th>
+                <th style="width:20%;">Credit ($)</th>
+                <th style="width:20%;">Line Memo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="journal-row">
+                <td>
+                  <select class="jv-account">
+                    <option value="1010">1010 - Cash in Hand</option>
+                    <option value="1020">1020 - Main Bank Account</option>
+                    <option value="1030">1030 - Accounts Receivable</option>
+                    <option value="2010">2010 - Accounts Payable</option>
+                    <option value="4010">4010 - Sales Revenue</option>
+                    <option value="6010">6010 - Salaries Expense</option>
+                    <option value="6020">6020 - Office Rent Expense</option>
+                  </select>
+                </td>
+                <td><input type="number" class="jv-debit" step="0.01" placeholder="0.00"></td>
+                <td><input type="number" class="jv-credit" step="0.01" placeholder="0.00"></td>
+                <td><input type="text" class="jv-memo" placeholder="Memo"></td>
+              </tr>
+              <tr class="journal-row">
+                <td>
+                  <select class="jv-account">
+                    <option value="4010" selected>4010 - Sales Revenue</option>
+                    <option value="1020">1020 - Main Bank Account</option>
+                    <option value="2010">2010 - Accounts Payable</option>
+                    <option value="3010">3010 - Owner's Equity</option>
+                  </select>
+                </td>
+                <td><input type="number" class="jv-debit" step="0.01" placeholder="0.00"></td>
+                <td><input type="number" class="jv-credit" step="0.01" placeholder="0.00"></td>
+                <td><input type="text" class="jv-memo" placeholder="Memo"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('modalManualJournal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Validate & Post Voucher</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Issue Credit / Debit Note -->
+  <div class="modal-overlay" id="modalNewNote">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">📝 Issue Credit / Debit Note</div>
+        <button class="modal-close" onclick="closeModal('modalNewNote')">&times;</button>
+      </div>
+      <form id="formNewNote">
+        <div class="modal-body">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Note Type *</label>
+              <select id="noteType">
+                <option value="Credit Note">Credit Note (To Customer - Reduces A/R)</option>
+                <option value="Debit Note">Debit Note (To Vendor - Reduces A/P)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Customer / Vendor Name *</label>
+              <input type="text" id="noteParty" required>
+            </div>
+            <div class="form-group">
+              <label>Original Invoice / Bill Reference</label>
+              <input type="text" id="noteRefDoc" placeholder="e.g. INV-2026-002">
+            </div>
+            <div class="form-group">
+              <label>Adjustment Amount ($) *</label>
+              <input type="number" id="noteAmount" step="0.01" required>
+            </div>
+            <div class="form-group">
+              <label>Date *</label>
+              <input type="date" id="noteDate" required>
+            </div>
+            <div class="form-group full-width">
+              <label>Reason *</label>
+              <input type="text" id="noteReason" placeholder="e.g. Damaged goods returned or contract adjustment" required>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('modalNewNote')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Issue Note</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Receive Payment from Customer -->
+  <div class="modal-overlay" id="modalReceivePayment">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">💵 Receive Customer Payment</div>
+        <button class="modal-close" onclick="closeModal('modalReceivePayment')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="recPayInvId">
+        <div style="background:var(--bg-tertiary);padding:1rem;border-radius:var(--radius-md);margin-bottom:1.25rem;">
+          <div>Customer: <strong id="recPayCustomer"></strong></div>
+          <div>Invoice: <span class="mono" id="recPayInvNum"></span></div>
+          <div>Outstanding Balance Due: <strong class="mono" style="color:var(--primary);" id="recPayDue"></strong></div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Payment Amount ($) *</label>
+            <input type="number" id="recPayAmount" step="0.01" required>
+          </div>
+          <div class="form-group">
+            <label>Deposit To Account *</label>
+            <select id="recPayMethod">
+              <option value="Bank">1020 - Main Bank Account</option>
+              <option value="Cash">1010 - Cash in Hand</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Payment Date *</label>
+            <input type="date" id="recPayDate" required>
+          </div>
+          <div class="form-group">
+            <label>Check / Wire Reference</label>
+            <input type="text" id="recPayRef" placeholder="e.g. WIRE-8921">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('modalReceivePayment')">Cancel</button>
+        <button type="button" class="btn btn-success" onclick="submitReceivePayment()">Confirm Payment Receipt</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Pay Vendor Bill -->
+  <div class="modal-overlay" id="modalPayVendor">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">💸 Settle Vendor / Supplier Bill</div>
+        <button class="modal-close" onclick="closeModal('modalPayVendor')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="payVendorBillId">
+        <div style="background:var(--bg-tertiary);padding:1rem;border-radius:var(--radius-md);margin-bottom:1.25rem;">
+          <div>Payee Vendor: <strong id="payVendorName"></strong></div>
+          <div>Bill Ref: <span class="mono" id="payVendorBillNum"></span></div>
+          <div>Amount Due: <strong class="mono" style="color:var(--danger);" id="payVendorDue"></strong></div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Payment Amount ($) *</label>
+            <input type="number" id="payVendorAmount" step="0.01" required>
+          </div>
+          <div class="form-group">
+            <label>Pay From Account *</label>
+            <select id="payVendorMethod">
+              <option value="Bank">1020 - Main Bank Account</option>
+              <option value="Cash">1010 - Cash in Hand</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Payment Date *</label>
+            <input type="date" id="payVendorDate" required>
+          </div>
+          <div class="form-group">
+            <label>Transaction Reference</label>
+            <input type="text" id="payVendorRef" placeholder="e.g. ACH-TRANSFER-10">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('modalPayVendor')">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="submitPayVendor()">Disburse Payment</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: View & Print Invoice -->
+  <div class="modal-overlay" id="modalViewInvoice">
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <div class="modal-title">📄 Official Invoice Dossier</div>
+        <div>
+          <button class="btn btn-secondary btn-sm" onclick="window.print()">🖨️ Print / PDF</button>
+          <button class="modal-close" onclick="closeModal('modalViewInvoice')">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body" id="viewInvoiceBody">
+        <!-- Rendered dynamically -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('modalViewInvoice')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/accounting-engine.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/bookkeeping.js"></script>
+  <script>
+    // Set default dates on load
+    document.addEventListener('DOMContentLoaded', () => {
+      const today = new Date().toISOString().split('T')[0];
+      const dueDate = new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0];
+
+      ['invDate', 'billDate', 'expDate', 'cbDate', 'payrollDate', 'jvDate', 'noteDate', 'recPayDate', 'payVendorDate'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = today;
+      });
+
+      ['invDueDate', 'billDueDate'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = dueDate;
+      });
+    });
+
+    function runBankReconciliationTest() {
+      const input = parseFloat(document.getElementById('bankStatementInput').value);
+      if (isNaN(input)) {
+        NavManager.showToast('Please enter statement ending balance.', 'warning');
+        return;
+      }
+      const gl = AccountingEngine.getGeneralLedger();
+      const book = gl['1020']?.netBalance || 0;
+      const diff = Math.round((book - input) * 100) / 100;
+      const res = document.getElementById('bankRecResult');
+
+      if (Math.abs(diff) < 0.05) {
+        res.innerHTML = `<span style="color:var(--success);font-weight:700;">✓ Bank Cleared & Reconciled: Perfect Match ($${input.toFixed(2)})</span>`;
+        NavManager.showToast('Bank reconciliation matched successfully!', 'success');
+      } else {
+        res.innerHTML = `<span style="color:var(--danger);font-weight:700;">⚠️ Discrepancy Found: Difference of ${NavManager.fmt(diff)}. Check uncleared checks or transit deposits.</span>`;
+        NavManager.showToast('Bank reconciliation discrepancy flagged.', 'danger');
+      }
+    }
+
+    function runCashReconciliationTest() {
+      const input = parseFloat(document.getElementById('cashPhysicalInput').value);
+      if (isNaN(input)) {
+        NavManager.showToast('Please enter physical count.', 'warning');
+        return;
+      }
+      const gl = AccountingEngine.getGeneralLedger();
+      const book = gl['1010']?.netBalance || 0;
+      const diff = Math.round((book - input) * 100) / 100;
+      const res = document.getElementById('cashRecResult');
+
+      if (Math.abs(diff) < 0.05) {
+        res.innerHTML = `<span style="color:var(--success);font-weight:700;">✓ Cash Float Verified: Count matches book ($${input.toFixed(2)})</span>`;
+        NavManager.showToast('Petty cash count reconciled!', 'success');
+      } else {
+        res.innerHTML = `<span style="color:var(--danger);font-weight:700;">⚠️ Cash Shortage/Overage: Difference of ${NavManager.fmt(diff)}. Investigate petty cash vouchers.</span>`;
+        NavManager.showToast('Cash variance detected.', 'warning');
+      }
+    }
+  </script>
+</body>
+</html>

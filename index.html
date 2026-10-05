@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Accumen Pro - Enterprise Accounting & Bookkeeping Hub</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Navigation Bar Placeholder (Rendered dynamically by nav.js) -->
+  <div id="navPlaceholder"></div>
+
+  <main class="container">
+    <!-- Hero / Welcome Header -->
+    <div class="page-header">
+      <div class="page-title-group">
+        <h1>
+          <span>⚡</span>
+          <span>Accumen Pro Financial Control Hub</span>
+        </h1>
+        <p class="page-subtitle">Fully Automated Dual-Portal Accounting & Bookkeeping System (IFRS & GAAP Compliant)</p>
+      </div>
+      <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+        <a href="bookkeeping.html" class="btn btn-primary btn-lg">
+          <span>📑</span> Open Bookkeeper Portal
+        </a>
+        <a href="accounting.html" class="btn btn-success btn-lg">
+          <span>📈</span> Open Accountant Portal
+        </a>
+      </div>
+    </div>
+
+    <!-- Executive KPI Grid -->
+    <div class="stats-grid">
+      <div class="stat-card success">
+        <div class="stat-header">
+          <span class="stat-title">Cash & Liquid Bank</span>
+          <div class="stat-icon">🏦</div>
+        </div>
+        <div class="stat-val" id="hubCashBank">$0.00</div>
+        <div class="stat-footer">
+          <span>Total available across Petty Cash & Main Bank</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <span class="stat-title">Gross Revenue (YTD)</span>
+          <div class="stat-icon">💰</div>
+        </div>
+        <div class="stat-val" id="hubRevenue">$0.00</div>
+        <div class="stat-footer">
+          <span>Invoiced sales & professional fees</span>
+        </div>
+      </div>
+
+      <div class="stat-card purple">
+        <div class="stat-header">
+          <span class="stat-title">Net Operating Profit</span>
+          <div class="stat-icon">📈</div>
+        </div>
+        <div class="stat-val" id="hubNetIncome">$0.00</div>
+        <div class="stat-footer">
+          <span>After COGS, operating expenses & tax</span>
+        </div>
+      </div>
+
+      <div class="stat-card warning">
+        <div class="stat-header">
+          <span class="stat-title">Accounts Receivable (A/R)</span>
+          <div class="stat-icon">📥</div>
+        </div>
+        <div class="stat-val" id="hubReceivables">$0.00</div>
+        <div class="stat-footer">
+          <span>Pending customer collections</span>
+        </div>
+      </div>
+
+      <div class="stat-card danger">
+        <div class="stat-header">
+          <span class="stat-title">Accounts Payable (A/P)</span>
+          <div class="stat-icon">📤</div>
+        </div>
+        <div class="stat-val" id="hubPayables">$0.00</div>
+        <div class="stat-footer">
+          <span>Outstanding supplier & vendor bills</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <span class="stat-title">Trial Balance Integrity</span>
+          <div class="stat-icon">⚖️</div>
+        </div>
+        <div class="stat-val" style="font-size:1.4rem;color:var(--success);" id="hubTrialBalance">100% Balanced</div>
+        <div class="stat-footer">
+          <span>Double-entry mathematical verification</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dual Workspace Feature Comparison Cards -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(460px, 1fr));gap:1.5rem;margin-bottom:2rem;">
+      
+      <!-- Bookkeeper Workspace Card -->
+      <div class="card" style="border-top:4px solid var(--primary);">
+        <div class="card-header">
+          <div>
+            <div class="card-title">
+              <span>📑</span> Bookkeeper Workspace
+            </div>
+            <div class="card-desc">Daily Operational Recording, Billing, Payments & Transaction Management</div>
+          </div>
+          <span class="badge badge-primary">Operations</span>
+        </div>
+        
+        <p style="margin-bottom:1.25rem;">
+          Dedicated interface for recording all routine business transactions with instantaneous double-entry general ledger syncing:
+        </p>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;font-size:0.88rem;margin-bottom:1.5rem;">
+          <div>✓ Sales & Invoices Creation</div>
+          <div>✓ Accounts Receivable (AR) Aging</div>
+          <div>✓ Purchase Bills & Payables</div>
+          <div>✓ Accounts Payable (AP) Aging</div>
+          <div>✓ Customer Payments Receipt</div>
+          <div>✓ Bank & Cash Reconciliation</div>
+          <div>✓ Supplier Bill Settlements</div>
+          <div>✓ Payroll Runs & Withholding</div>
+          <div>✓ Petty Cash & Bank Transfers</div>
+          <div>✓ Credit & Debit Notes</div>
+          <div>✓ Expense Categorization</div>
+          <div>✓ Month-End Closing Prep</div>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border-color);padding-top:1rem;">
+          <span style="font-size:0.85rem;color:var(--text-muted);">Real-time GL posting on save</span>
+          <a href="bookkeeping.html" class="btn btn-primary">Enter Bookkeeper Portal &rarr;</a>
+        </div>
+      </div>
+
+      <!-- Accountant Workspace Card -->
+      <div class="card" style="border-top:4px solid var(--success);">
+        <div class="card-header">
+          <div>
+            <div class="card-title">
+              <span>📈</span> Chief Accountant & Controller Suite
+            </div>
+            <div class="card-desc">Financial Reporting, Fixed Assets, Closing, Audit & Strategy</div>
+          </div>
+          <span class="badge badge-success">Executive & Audit</span>
+        </div>
+
+        <p style="margin-bottom:1.25rem;">
+          High-level portal for reviewing bookkeeping entries, computing adjustments, generating statutory financial statements and audit packs:
+        </p>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;font-size:0.88rem;margin-bottom:1.5rem;">
+          <div>✓ Profit & Loss (Income Statement)</div>
+          <div>✓ Financial Ratios Analysis</div>
+          <div>✓ Balance Sheet (Auto-Balanced)</div>
+          <div>✓ Actual vs Budget Variance</div>
+          <div>✓ Cash Flow Statement (Indirect)</div>
+          <div>✓ Sales & Corporate Tax Prep</div>
+          <div>✓ Fixed Asset & Depreciation</div>
+          <div>✓ Internal Controls Diagnostic</div>
+          <div>✓ Accruals & Prepayments Engine</div>
+          <div>✓ Month-End & Year-End Close</div>
+          <div>✓ Journal Entry Approvals</div>
+          <div>✓ Auditor Schedules & Queries</div>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border-color);padding-top:1rem;">
+          <span style="font-size:0.85rem;color:var(--text-muted);">IFRS & GAAP statement engine</span>
+          <a href="accounting.html" class="btn btn-success">Enter Accountant Portal &rarr;</a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- System Audit Trail & Recent Activity Feed -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">
+            <span>🛡️</span> Real-Time Audit Trail & Integrity Log
+          </div>
+          <div class="card-desc">Automatic chronological record of all ledger adjustments, sales, disbursements and reviews</div>
+        </div>
+        <span class="badge badge-neutral" id="auditLogCount">0 Entries Logged</span>
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>Category</th>
+              <th>Action Details</th>
+              <th>User Role</th>
+              <th class="text-right">Integrity Status</th>
+            </tr>
+          </thead>
+          <tbody id="hubAuditLogBody">
+            <tr><td colspan="5" class="text-center" style="padding:1.5rem;color:var(--text-muted);">Loading system activity...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Quick Setup & Corporate Profile Modal Trigger -->
+    <div class="card" style="background:var(--bg-glass);">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+        <div>
+          <h3 style="margin-bottom:0.25rem;">Enterprise Configuration</h3>
+          <p style="font-size:0.88rem;">Apex Global Solutions Ltd. • Currency: USD ($) • Fiscal Year: Jan 1 - Dec 31 • Standard Tax Rate: 10%</p>
+        </div>
+        <div style="display:flex;gap:0.75rem;">
+          <button class="btn btn-secondary" onclick="resetToFreshBooks()">
+            <span>🗑️</span> Reset to Empty Books
+          </button>
+          <button class="btn btn-primary" onclick="loadDemoDataset()">
+            <span>⚡</span> Re-Load Demo Data
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="js/accounting-engine.js"></script>
+  <script src="js/nav.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      NavManager.renderNav('hub');
+      renderHubDashboard();
+    });
+
+    function renderHubDashboard() {
+      const gl = AccountingEngine.getGeneralLedger();
+      const pnl = AccountingEngine.getProfitAndLoss();
+      const tb = AccountingEngine.getTrialBalance();
+      const agingAR = AccountingEngine.getAgingReport('AR');
+      const agingAP = AccountingEngine.getAgingReport('AP');
+      const logs = AccountingEngine.getAuditLogs();
+
+      const totalCashBank = (gl['1010']?.netBalance || 0) + (gl['1020']?.netBalance || 0);
+
+      document.getElementById('hubCashBank').textContent = NavManager.fmt(totalCashBank);
+      document.getElementById('hubRevenue').textContent = NavManager.fmt(pnl.totalRevenue);
+      document.getElementById('hubNetIncome').textContent = NavManager.fmt(pnl.netIncome);
+      document.getElementById('hubReceivables').textContent = NavManager.fmt(agingAR.total);
+      document.getElementById('hubPayables').textContent = NavManager.fmt(agingAP.total);
+
+      const tbEl = document.getElementById('hubTrialBalance');
+      if (tb.isBalanced) {
+        tbEl.textContent = '✓ Perfectly Balanced';
+        tbEl.style.color = 'var(--success)';
+      } else {
+        tbEl.textContent = `⚠️ Diff: ${NavManager.fmt(tb.difference)}`;
+        tbEl.style.color = 'var(--danger)';
+      }
+
+      // Render Audit Log Table
+      const logBody = document.getElementById('hubAuditLogBody');
+      document.getElementById('auditLogCount').textContent = `${logs.length} Operations Logged`;
+      
+      if (logs.length === 0) {
+        logBody.innerHTML = `<tr><td colspan="5" class="text-center" style="padding:1.5rem;color:var(--text-muted);">No activity recorded yet.</td></tr>`;
+      } else {
+        logBody.innerHTML = logs.slice(0, 10).map(log => `
+          <tr>
+            <td>${new Date(log.timestamp).toLocaleString()}</td>
+            <td><span class="badge badge-neutral">${log.category}</span></td>
+            <td style="font-weight:600;">${log.action}</td>
+            <td><span class="badge badge-primary">${log.user}</span></td>
+            <td class="text-right"><span class="badge badge-success">✓ Synced</span></td>
+          </tr>
+        `).join('');
+      }
+    }
+
+    function loadDemoDataset() {
+      AccountingEngine.loadDemoData();
+      NavManager.showToast('Demo enterprise dataset loaded! All ledgers and financial statements synced.', 'success');
+      setTimeout(() => location.reload(), 500);
+    }
+
+    function resetToFreshBooks() {
+      if (confirm('Are you sure you want to reset all books? All transactions, invoices, and journal entries will be cleared for fresh entry.')) {
+        AccountingEngine.resetData();
+        NavManager.showToast('System reset to blank books. Ready for new transactions.', 'info');
+        setTimeout(() => location.reload(), 500);
+      }
+    }
+  </script>
+</body>
+</html>
